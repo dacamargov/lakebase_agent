@@ -32,9 +32,6 @@ Necesitas crear una instancia de Lakebase para almacenar la memoria conversacion
 ```python
 LAKEBASE_INSTANCE_NAME = "TU_NOMBRE_DE_INSTANCIA"  # Cambiar esto
 ```
-
-**Estimación de Costos**: ~$0.10-0.50/día con scale-to-zero habilitado
-
 ---
 
 ### 2. **Unity Catalog - Catalog y Schema** (REQUERIDO)
@@ -43,8 +40,8 @@ Según la política del workspace, debes usar el catálogo **`users`** con tu sc
 
 **Configuración recomendada:**
 ```python
-catalog = "users"                    # ✅ Usa el catálogo users
-schema = "tu_nombre"                 # ✅ Tu schema personal (ejemplo: daniel_vargas)
+catalog = "users"                    # ✅ Usa el catálogo que tengas acesso y permiso
+schema = "tu_nombre"                 # ✅ El schema 
 model_name = "stateful_lakebase_agent"  # Nombre de tu modelo
 ```
 
@@ -52,13 +49,6 @@ model_name = "stateful_lakebase_agent"  # Nombre de tu modelo
 * `USE CATALOG` en `users`
 * `USE SCHEMA` en tu schema personal
 * `CREATE MODEL` en tu schema
-
-**Para configurar** (actualiza Cell 11):
-1. Reemplaza los espacios en blanco con tus valores
-2. Asegúrate de que tu schema existe:
-   ```sql
-   CREATE SCHEMA IF NOT EXISTS users.tu_nombre;
-   ```
 
 **✅ Verificación:**
 ```python
@@ -96,53 +86,6 @@ except:
 * `databricks-dbrx-instruct`
 
 Actualiza `LLM_ENDPOINT_NAME` en Cell 3 (línea 38) si usas otro endpoint.
-
----
-
-## 🔧 Pasos de Configuración
-
-### **Paso 1: Crear Lakebase Instance**
-```
-Lakebase App → New Project → Autoscaling
-Name: dv-agents-memory (o tu nombre)
-PG Version: 17
-```
-
-### **Paso 2: Actualizar Cell 3 - agent.py**
-Cambia la línea 42:
-```python
-LAKEBASE_INSTANCE_NAME = "tu-instancia-lakebase"  # ← ACTUALIZAR AQUÍ
-```
-
-### **Paso 3: Actualizar Cell 11 - UC Registration**
-Reemplaza los espacios vacíos:
-```python
-catalog = "users"                           # Catálogo users
-schema = "tu_nombre_apellido"              # Tu schema personal
-model_name = "stateful_lakebase_agent"     # Nombre del modelo
-```
-
-### **Paso 4: Ejecutar el Notebook**
-1. **Cell 2**: Instala dependencias (~2-3 minutos)
-2. **Cell 3**: Crea agent.py con Lakebase config
-3. **Cells 4-6**: Prueba el agente localmente
-4. **Cell 7**: Restart Python (limpia conexiones)
-5. **Cell 9**: Log a MLflow
-6. **Cell 12**: Registra en Unity Catalog
-7. **Cell 14**: Deploy a Model Serving
-
----
-
-## 📊 Políticas del Workspace (Field Eng)
-
-**Retención y Tags:**
-* ✅ Tu schema personal en `users.*` NO necesita tags RemoveAfter
-* ⚠️ Model Serving endpoints sin tag RemoveAfter se eliminan después de 14 días
-* ⚠️ Lakebase instance debe tener justificación o se elimina en 30 días
-
-**Para mantener recursos más tiempo:**
-1. Agrega tag `RemoveAfter` con fecha YYYY-MM-DD
-2. O solicita excepción en [FEINFRA Jira](https://go/freshservice)
 
 ---
 
@@ -196,13 +139,4 @@ for ep in w.serving_endpoints.list():
 * [Workspace Policy](go/fe/workspaces)
 
 ---
-
-## ✅ Checklist Pre-Ejecución
-
-- [ ] Lakebase instance creada y nombre actualizado en Cell 3
-- [ ] Valores de catalog/schema/model_name actualizados en Cell 11
-- [ ] LLM endpoint verificado y disponible
-- [ ] Permisos de Unity Catalog confirmados
-- [ ] Compute serverless disponible (default en este workspace)
-
 **¡Listo para ejecutar!** 🚀
